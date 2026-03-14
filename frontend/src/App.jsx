@@ -6,7 +6,7 @@ function App() {
   const [password, setPassword] = useState('')
 
   const sendNumber = async () => {
-    const response = await fetch("https://password-generator-api.onrender.com/generater
+    const response = await fetch("https://password-generator-4o9v.onrender.com/generater
 ",{
       method:"POST", 
       headers: {

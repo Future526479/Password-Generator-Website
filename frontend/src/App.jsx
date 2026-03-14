@@ -4,18 +4,28 @@ import "./App.css"
 function App() {
   const [number, setNumber] = useState(5)
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const sendNumber = async () => {
-    const response = await fetch("https://password-generator-4o9v.onrender.com/generater",{
-      method:"POST", 
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ length: Number(number) })
-    });
+    setLoading(true);
+    
+    try{
+      const response = await fetch("https://password-generator-4o9v.onrender.com/generate",{
+        method:"POST", 
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ length: Number(number) })
+      });
 
-    const data = await response.json();
-    setPassword(data.password);
+      const data = await response.json();
+      setPassword(data.password);
+      
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -27,22 +37,25 @@ function App() {
         <div className="field">
           <label>Length</label>
           <select value={number} onChange={(e) => setNumber(e.target.value)}>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
+            {[5,6,7,8,9,10,11,12,13,14,15].map((num) => (
+              <option key={num} value={num}>{num}</option>
+            ))}
           </select>
         </div>
 
-        <button className="generateBtn" onClick={sendNumber}>
-          Generate
+        <button 
+          className="generateBtn" 
+          onClick={sendNumber}
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <span className="spinner"></span>
+              Generating...
+            </>
+          ) : (
+            "Generate"
+          )}
         </button>
 
         <div className="result">
